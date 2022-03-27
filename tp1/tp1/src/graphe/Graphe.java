@@ -282,30 +282,62 @@ public class Graphe {
 	}
 	
 	public void AlgoDjikstra (Vertex vertex) {
-		// Initialisation 
-		 String[] sommetTraite = new String[listeSommets.size()];
-	     int[] dist = new int[this.listeSommets.size()];
+		// Initialisation
 	     int ordre=0; 
 	     ArrayList<Vertex> Z = new ArrayList<Vertex>();
+	     HashMap <Vertex, Double> Dist = new  HashMap<Vertex, Double> ();
+	     HashMap <Vertex, Double> Dist2 = new  HashMap<Vertex, Double> ();
 	     
-	     //On supprime le sommet de d�part de la liste 
-	    // A faire apr�s Z.remove(vertex);
+	     //On supprime le sommet de départ de la liste on ajouter le vertex à la liste, et on met la distance 
+	    // A faire après 
+	     Dist.put(vertex, 0.00);
+	     Dist2.put(vertex,0.00); 
+	     Z.remove(vertex); 
 	     
-	     //On associe � tous les autres sommets la valeur infinie
+	     //On associe à tous les autres sommets la valeur infinie dans le hasmhmap 
 	     // #TODO Verifier s'il est bien dans le graphe  
 	     for(int i=0;i<listeSommets.size();i++)
 	        {
-	    	 dist[i] = Integer.MAX_VALUE; 
+	    	 Dist2.put(Z.get(i),Double.MAX_VALUE);    
 	        }
 
-	      // Distance entre le sommet de d�part et lui-m�me
-	        dist[vertex.getSommet()] = 0;
-	        while (Z.isEmpty()==false) {
-	        	//Prendre x de mani�re � ce que le chemins soit le plus court entre x et le prochain sommet
-	        	//Comment faire  ? Prendre X et le prochain voir la valeur dans edge faire un comparauteur de valeur et prendre la plus faible 
-	        	// supprimer la valeur du vertex pr�c�dent de la liste 
-	        	// Ins�rer la distance dans le tableau distance 
+	      // Distance entre le sommet de départ et lui-même
+	       while (Dist2.isEmpty()==false) {
+	    	   //A modifier choisir la plus petite distance 
+	    	    Double min = Collections.min(Dist2.values());
+	    	    Vertex element = getSingleKeyFromValue(Dist2,min);
+	    	    
+	    	    //Trouver le min d'une liste 
+
+	    	    
+	    	    
+	        	for(Edge successeur:listeAdjacence.get(element.getSommet())) {
+	        		//TODO récupérer la valeur de l'edge entre le sommet et vérifier si la distance est moins grande
+	        		if (Dist.get(element) > successeur.getValeurs()[0] ) {
+	        			Dist.replace(element,successeur.getValeurs()[0]);
+	        		
+	        	// A -> B -> C  
+	        			
+	        			//Faire pour tout chemin du graphe si la somme des chemins est plus petite que la somme entrée dans la liste alors
+	        			//Il faut cha
+	        		}
+	        		// insérer dans la deuxième liste  
+	        		Z.remove(vertex); 
+	        	}
+
 	        }
+
+	}
+	
+	
+	public static <K, V> K getSingleKeyFromValue(Map<K, V> map, V value) {
+        for (Map.Entry<K, V> entry : map.entrySet()) {
+            if (Objects.equals(value, entry.getValue())) {
+                return entry.getKey();
+            }
+        }
+        return null;
+    }
 
 	}
 	
