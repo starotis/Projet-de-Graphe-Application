@@ -298,6 +298,11 @@ public class Graphe {
 	     // #TODO Verifier s'il est bien dans le graphe  
 	     for(int i=0;i<listeSommets.size();i++)
 	        {
+	    	 //Si on trouve le sommet dans la liste des sommet adjacents 
+	    	 if (Z.get(i) == vertex.listeAdjacence.get(vertex.getSommet()){
+	    		 //Elle prend la taille du chemin 
+	    		 Dist2.put(Z.get(i),successeur.getValeurs()[0]); 
+	    	 }else 
 	    	 Dist2.put(Z.get(i),Double.MAX_VALUE);    
 	        }
 
