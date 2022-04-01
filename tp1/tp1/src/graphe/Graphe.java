@@ -6,7 +6,15 @@ import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Iterator;
 import java.util.LinkedList;
+import java.util.Map;
+import java.util.Objects;
+import java.util.Scanner;
+import java.util.Set;
 
 public class Graphe {
 	boolean oriente;
@@ -67,7 +75,7 @@ public class Graphe {
 			else
 			{
 				oriente = false;
-			}
+			} 
 			
 			//Quatrieme ligne
 			String[] parameters = contenuFichier.get(3).split(" ");
@@ -79,12 +87,13 @@ public class Graphe {
 			//Vertices
 			for(int i = 0; i<nbSommets;i++)
 			{
-				listeSommets.add(new Vertex(contenuFichier.get(i+5).split(" ")[1],Integer.parseInt(contenuFichier.get(i+5).split(" ")[0])));
-				LinkedList l = new LinkedList<Edge>();
+				listeSommets.add(new Vertex(contenuFichier.get(i+5).split(" ")[1],Integer.parseInt(contenuFichier.get(i+5).split(" ")[0]),Double.parseDouble(contenuFichier.get(i+5).split(" ")[2]) , Double.parseDouble(contenuFichier.get(i+5).split(" ")[3])));
+				LinkedList l = new LinkedList<Edge>();			
 				listeAdjacence.add(l);
 			}
 			
 			int incr = nbSommets+6;
+			
 			//Edges 
 			for(int i = 0; i<nbArcs;i++)
 			{
@@ -103,9 +112,9 @@ public class Graphe {
 				listeAdjacence.get(Integer.parseInt(edges[0])).add(edge);
 			}
 			
-			//Degr� 
+			//Degré 
             this.degres = new int[nbSommets];
-            //Mise � 0 pour degr�
+            //Mise à 0 pour degré
             for(int i=0;i<degres.length;i++)
             {
                 this.degres[i] = 0;
@@ -153,7 +162,7 @@ public class Graphe {
 		afficher += "nbArcs = ";
 		afficher += Integer.toString(nbArcs);
 		
-		afficher += "\n";
+		afficher += "\n"; 
 		afficher += "nbValeursParArcs = ";
 		afficher += Integer.toString(nbValeursParArc);
 		
@@ -274,6 +283,8 @@ public class Graphe {
 		return listeSommets;
 	}
 	
+
+	
 	public double CalculDistance(double longitudeA, double latitudeA, double longitudeB, double latitudeB ) {
 		double dlambda = longitudeB - longitudeA ; 
 		double Distance =  6371 *Math.acos(Math.sin(Math.toRadians(latitudeA))*Math.sin(Math.toRadians(latitudeB)) + Math.cos(Math.toRadians(latitudeA))*Math.cos(Math.toRadians(latitudeB))*Math.cos(Math.toRadians(dlambda)));
@@ -283,54 +294,63 @@ public class Graphe {
 	
 	public void AlgoDjikstra (Vertex vertex) {
 		// Initialisation
-	     int ordre=0; 
-	     ArrayList<Vertex> Z = new ArrayList<Vertex>();
+	     ArrayList<Vertex> Z = (ArrayList<Vertex>) listeSommets.clone();
 	     HashMap <Vertex, Double> Dist = new  HashMap<Vertex, Double> ();
 	     HashMap <Vertex, Double> Dist2 = new  HashMap<Vertex, Double> ();
 	     
-	     //On supprime le sommet de départ de la liste on ajouter le vertex à la liste, et on met la distance 
-	    // A faire après 
-	     Dist.put(vertex, 0.00);
 	     Dist2.put(vertex,0.00); 
 	     Z.remove(vertex); 
+
+	     for(Vertex v: Z) 
+	        { 
+	    	 Dist2.put(v,Double.POSITIVE_INFINITY);
+	        }
 	     
-	     //On associe à tous les autres sommets la valeur infinie dans le hasmhmap 
-	     // #TODO Verifier s'il est bien dans le graphe  
-	     for(int i=0;i<listeSommets.size();i++)
-	        {
-	    	 //Si on trouve le sommet dans la liste des sommet adjacents 
-	    	 if (Z.get(i) == vertex.listeAdjacence.get(vertex.getSommet()){
-	    		 //Elle prend la taille du chemin 
-	    		 Dist2.put(Z.get(i),successeur.getValeurs()[0]); 
-	    	 }else 
-	    	 Dist2.put(Z.get(i),Double.MAX_VALUE);    
+	     
+	     Vertex v_successeur_depart;
+	     for(int i=0;i<listeAdjacence.get(vertex.getSommet()).size();i++)
+	     {
+	    	 v_successeur_depart = listeSommets.get( listeAdjacence.get(vertex.getSommet()).get(i).getSommetTerminal() );	 
+	    	 Dist2.put(v_successeur_depart, listeAdjacence.get(vertex.getSommet()).get(i).getValeurs()[0]);
+	     	 //System.out.println("Test" + Dist2.get(v_successeur_depart));
+	     }
+	     
+	      
+	       while (Z.isEmpty()==false) {
+	    	   
+	    	   for ( Vertex v: Z)
+	    	   {
+	    		   Dist.put(v,Dist2.get(v)); 
+	    	   }
+	    	   
+    		   Double min = Collections.min(Dist.values());
+	    	   Vertex element = getSingleKeyFromValue(Dist,min);
+	    	   Z.remove(element); 
+	    	   Vertex v_successeur_element;
+	    	   
+	    	   for(int i=0;i<listeAdjacence.get(element.getSommet()).size();i++)
+	   	     		{
+	    		   		// run que 5 fois , bug la sixième fois 
+			   	    	v_successeur_element = listeSommets.get(listeAdjacence.get(element.getSommet()).get(i).getSommetTerminal());	 
+			        	double d1 = Dist2.get(element);
+			        	double d2 = listeAdjacence.get(element.getSommet()).get(i).getValeurs()[0]; 
+			        	if(d1+d2 < Dist2.get(v_successeur_element)) {
+			        		Dist.replace(v_successeur_element,d1+d2);
+		        			Dist2.replace(v_successeur_element,d1+d2);	
+			        	}
+	   	     		}
+	    	   
+	    	  //  System.out.println("Element supprimé " + element );
+		    	Dist.clear();
+
 	        }
-
-	      // Distance entre le sommet de départ et lui-même
-	       while (Dist2.isEmpty()==false) {
-	    	   //A modifier choisir la plus petite distance 
-	    	    Double min = Collections.min(Dist2.values());
-	    	    Vertex element = getSingleKeyFromValue(Dist2,min);
-	    	    
-	    	    //Trouver le min d'une liste 
-
-	    	    
-	    	    
-	        	for(Edge successeur:listeAdjacence.get(element.getSommet())) {
-	        		//TODO récupérer la valeur de l'edge entre le sommet et vérifier si la distance est moins grande
-	        		if (Dist.get(element) > successeur.getValeurs()[0] ) {
-	        			Dist.replace(element,successeur.getValeurs()[0]);
-	        		
-	        	// A -> B -> C  
-	        			
-	        			//Faire pour tout chemin du graphe si la somme des chemins est plus petite que la somme entrée dans la liste alors
-	        			//Il faut cha
-	        		}
-	        		// insérer dans la deuxième liste  
-	        		Z.remove(vertex); 
-	        	}
-
-	        }
+	    Set listKeys=Dist2.keySet();
+   		Iterator iterateur=listKeys.iterator();   
+	       while(iterateur.hasNext())
+   		{
+   			Object key= iterateur.next();
+   			System.out.println (key+"=>"+Dist2.get(key));
+   		}
 
 	}
 	
@@ -343,8 +363,6 @@ public class Graphe {
         }
         return null;
     }
-
-	}
 	
 	
 	
