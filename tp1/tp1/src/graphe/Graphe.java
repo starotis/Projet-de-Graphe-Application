@@ -285,13 +285,6 @@ public class Graphe {
 	
 
 	
-	public double CalculDistance(double longitudeA, double latitudeA, double longitudeB, double latitudeB ) {
-		double dlambda = longitudeB - longitudeA ; 
-		double Distance =  6371 *Math.acos(Math.sin(Math.toRadians(latitudeA))*Math.sin(Math.toRadians(latitudeB)) + Math.cos(Math.toRadians(latitudeA))*Math.cos(Math.toRadians(latitudeB))*Math.cos(Math.toRadians(dlambda)));
-		System.out.printf("La distance entre ces deux points vaut : %f\n", Distance );
-		return Distance; 
-	}
-	
 	public void AlgoDjikstra (Vertex vertex) {
 		// Initialisation
 	     ArrayList<Vertex> Z = (ArrayList<Vertex>) listeSommets.clone();
